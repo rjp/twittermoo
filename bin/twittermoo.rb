@@ -14,11 +14,12 @@ $options = {
     :once => nil,
     :wait => 20,
     :period => 3600,
-    :every => 300
+    :every => 300,
+    :keyfile => nil
 }
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: twittermoo.rb [-v] [-p port] [-h host] [-d dbfile] [-c config] [-o] [-w N] [-p N] [-e N]"
+  opts.banner = "Usage: twittermoo.rb [-v] [-p port] [-h host] [-d dbfile] [-c config] [-o] [-w N] [-p N] [-e N] [-k file]"
 
   opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
     $options[:verbose] = v
@@ -55,7 +56,17 @@ OptionParser.new do |opts|
   opts.on("-c", "--config CONFIG", String, "config file") do |p|
     $options[:config] = p
   end
+
+  opts.on("-k", "--key filename", String, "Shared key file") do |p|
+    $options[:keyfile] = p
+  end
+
 end.parse!
+
+if $options[:keyfile] then
+    puts "loading secret key from #{$options[:keyfile]}"
+    $options[:secret_key] = File.open($options[:keyfile]).read.chomp
+end
 
 def send_message(x)
     if $options[:port].nil? then
@@ -64,6 +75,9 @@ def send_message(x)
         begin
             # irc_cat doesn't seem to like persistent connections
             $socket = TCPSocket.new($options[:host], $options[:port])
+            if $options[:secret_key] then
+                x = "%/#{$options[:secret_key]}/% #{x}"
+            end
             $socket.puts(x)
             $socket.close
         end
