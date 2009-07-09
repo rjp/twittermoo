@@ -95,7 +95,9 @@ config = YAML::load(open($options[:config]))
 
 # allow settings of options from the config file
 unless config['options'].nil? then
-    options.merge!(config['options'])
+    config['options'].each { |k,v|
+        $options[k.to_sym] = v
+    }
 end
 
 # TODO add an option for OAuth
