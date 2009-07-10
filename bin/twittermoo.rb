@@ -1,9 +1,18 @@
+#! /usr/bin/env ruby
+
 require 'rubygems'
 require 'twitter'
 require 'gdbm'
 require 'sha1'
 require 'optparse'
 require 'socket'
+
+# TODO move this to something like log4r if they have it
+def log(x)
+    if $options[:verbose] then
+        puts *x
+    end
+end
 
 $options = {
     :host => 'localhost',
@@ -81,13 +90,6 @@ def send_message(x)
             $socket.puts(x)
             $socket.close
         end
-    end
-end
-
-# TODO move this to something like log4r if they have it
-def log(x)
-    if $options[:verbose] then
-        puts *x
     end
 end
 
