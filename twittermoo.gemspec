@@ -1,6 +1,6 @@
 spec = Gem::Specification.new do |s| 
   s.name = "twittermoo"
-  s.version = "0.0.4"
+  s.version = "0.0.5"
   s.author = "Rob Partington"
   s.email = "zimpenfish@gmail.com"
   s.homepage = "http://rjp.github.com/twittermoo"
@@ -11,5 +11,6 @@ spec = Gem::Specification.new do |s|
   s.test_files = []
   s.has_rdoc = false
   s.add_dependency('twitter', '>= 0.5')
+  s.executables = ['twittermoo.rb']
 end
 
