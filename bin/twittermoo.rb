@@ -86,14 +86,28 @@ def send_message(x)
     if $options[:port].nil? then
         puts "! #{x}"
     else
-        begin
-            # irc_cat doesn't seem to like persistent connections
-            $socket = TCPSocket.new($options[:host], $options[:port])
-            if $options[:secret_key] then
-                x = "%/#{$options[:secret_key]}/% #{x}"
-            end
-            $socket.puts(x)
-            $socket.close
+        attempts = 5
+        loop do
+	        begin
+	            # irc_cat doesn't seem to like persistent connections
+	            $socket = TCPSocket.new($options[:host], $options[:port])
+	            if $options[:secret_key] then
+	                x = "%/#{$options[:secret_key]}/% #{x}"
+	            end
+	            $socket.puts(x)
+	            $socket.close
+	        rescue
+	            log "E $!"
+	            attempts = attempts - 1
+	            if attempts == 0 then
+	                log "too many failures, bailing for 120s"
+	                sleep 120
+	                attempts = 5
+	            else
+	                log "transient failure, sleeping for 30s"
+	                sleep 30
+	            end
+	        end
         end
     end
 end
