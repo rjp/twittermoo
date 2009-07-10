@@ -73,8 +73,13 @@ OptionParser.new do |opts|
 end.parse!
 
 if $options[:keyfile] then
-    puts "loading secret key from #{$options[:keyfile]}"
-    $options[:secret_key] = File.open($options[:keyfile]).read.chomp
+    log "loading secret key from #{$options[:keyfile]}"
+    begin
+        $options[:secret_key] = File.open($options[:keyfile]).read.chomp
+    rescue => e
+        $stderr.puts "Error getting secret key from #{$options[:keyfile]}: #{e}"
+        exit(1)
+    end
 end
 
 def send_message(x)
